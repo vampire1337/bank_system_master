@@ -1,0 +1,35 @@
+# node
+node_modules/
+dist/
+.build/
+.next/
+.cache/
+.vscode/
+
+# git
+.git/
+
+# конфигурации и lock-файлы
+*.lock
+*.log
+.env
+.env.*
+*.config.*
+*.rc
+tsconfig.*.json
+
+# output
+out/
+public/build/
+build/
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# system
+*.swp
+*.swo
+*.bak
+*.tmp

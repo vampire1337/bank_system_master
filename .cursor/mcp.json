@@ -1,0 +1,17 @@
+{
+    "mcpServers": {
+      "mem0-mcp": {
+        "command": "npx",
+        "args": ["-y", "@pinkpixel/mem0-mcp"],
+        "env": {
+          "MEM0_API_KEY": "m0-ZK468x6XcymdCqP22o6rvFzmG3aIBTlfoQwp67Sl",
+          "DEFAULT_USER_ID": "heist1337",
+          "DEFAULT_AGENT_ID": "cursor",
+          "DEFAULT_APP_ID": "${CURRENT_REPO_NAME}"
+        },
+        "alwaysAllow": ["add_memory", "search_memory", "delete_memory"],
+        "disabled": false
+      }
+    }
+  }
+  

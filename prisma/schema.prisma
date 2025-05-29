@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Модель пользователя
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String
+  name            String
+  role            UserRole  @default(CLIENT)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  creditRequests  CreditRequest[]
+  calculatorHistory CalculatorHistory[]
+}
+
+enum UserRole {
+  CLIENT
+  ADMIN
+}
+
+// Модель кредитной заявки
+model CreditRequest {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  status        RequestStatus @default(PENDING)
+  amount        Float
+  term          Int       // в месяцах
+  interestRate  Float
+  monthlyPayment Float?
+  totalPayment  Float?
+  
+  // Личная информация
+  firstName     String
+  lastName      String
+  middleName    String?
+  birthDate     DateTime
+  passportNumber String
+  passportIssuedBy String
+  passportIssuedDate DateTime
+  passportRegistration String
+  
+  // Данные о занятости
+  employmentType EmploymentType
+  employerName   String?
+  jobTitle       String?
+  workExperience Int?     // в месяцах
+  monthlyIncome  Float?
+  
+  // Дополнительные данные
+  phone         String
+  address       String
+  hasInsurance  Boolean   @default(false)
+  insuranceProgram InsuranceProgram? @relation(fields: [insuranceProgramId], references: [id])
+  insuranceProgramId String?
+  
+  // Скоринг
+  scoringResult Int?
+  scoringPassed Boolean?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ISSUED
+  CANCELED
+}
+
+enum EmploymentType {
+  EMPLOYED
+  SELF_EMPLOYED
+  BUSINESS_OWNER
+  RETIRED
+  STUDENT
+  UNEMPLOYED
+}
+
+// Модель программы страхования
+model InsuranceProgram {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  coveragePercent Float
+  cost        Float     // в процентах от суммы кредита
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  creditRequests CreditRequest[]
+}
+
+// Модель параметров кредитования
+model CreditParameters {
+  id          String    @id @default(uuid())
+  minAmount   Float
+  maxAmount   Float
+  minTerm     Int       // в месяцах
+  maxTerm     Int       // в месяцах
+  baseRate    Float     // базовая процентная ставка
+  minRate     Float     // минимальная возможная ставка
+  maxRate     Float     // максимальная возможная ставка
+  scoringThreshold Int  // порог одобрения для скоринга
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Модель истории использования калькулятора
+model CalculatorHistory {
+  id          String    @id @default(uuid())
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  amount      Float
+  term        Int
+  interestRate Float
+  monthlyPayment Float
+  totalPayment Float
+  createdAt   DateTime  @default(now())
+}
+
+// Модель статистики
+model Statistics {
+  id                String    @id @default(uuid())
+  totalRequests     Int       @default(0)
+  approvedRequests  Int       @default(0)
+  rejectedRequests  Int       @default(0)
+  issuedRequests    Int       @default(0)
+  canceledRequests  Int       @default(0)
+  averageAmount     Float?
+  averageTerm       Float?
+  averageRate       Float?
+  totalAmountIssued Float     @default(0)
+  updatedAt         DateTime  @updatedAt
+}
