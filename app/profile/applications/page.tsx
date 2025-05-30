@@ -5,7 +5,8 @@ import { prisma } from "@/app/lib/prisma";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
-import { formatCurrency } from "@/app/lib/utils";
+import StatusBadge from "@/app/components/StatusBadge";
+import { formatCurrency, formatDate } from "@/app/lib/utils";
 
 export const metadata: Metadata = {
   title: "Мои заявки | БанкКредит",
@@ -87,9 +88,7 @@ export default async function ApplicationsPage({
                       {request.id.substring(0, 8)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Intl.DateTimeFormat("ru-RU").format(
-                        request.createdAt
-                      )}
+                      {formatDate(request.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatCurrency(request.amount)}
@@ -106,31 +105,7 @@ export default async function ApplicationsPage({
                         : "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full font-medium ${
-                          request.status === "APPROVED"
-                            ? "bg-green-100 text-green-800"
-                            : request.status === "REJECTED"
-                            ? "bg-red-100 text-red-800"
-                            : request.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : request.status === "ISSUED"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {request.status === "APPROVED"
-                          ? "Одобрено"
-                          : request.status === "REJECTED"
-                          ? "Отклонено"
-                          : request.status === "PENDING"
-                          ? "На рассмотрении"
-                          : request.status === "ISSUED"
-                          ? "Выдан"
-                          : request.status === "CANCELED"
-                          ? "Отменена"
-                          : "Неизвестно"}
-                      </span>
+                      <StatusBadge status={request.status} />
                     </td>
                   </tr>
                 ))}

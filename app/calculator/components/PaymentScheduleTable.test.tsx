@@ -1,11 +1,12 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { PaymentScheduleTable } from './PaymentScheduleTable';
 import { PaymentScheduleItem } from '@/app/lib/calculatorUtils';
 
 // Мок для @/app/lib/utils
 jest.mock('@/app/lib/utils', () => ({
-  formatCurrency: (amount: number, ) => `${amount} ₽`,
+  formatCurrency: (amount: number) => `${amount} ₽`,
+  cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
 }));
 
 describe('PaymentScheduleTable', () => {
@@ -38,11 +39,13 @@ describe('PaymentScheduleTable', () => {
     expect(screen.getByText('Остаток долга')).toBeInTheDocument();
     
     // Проверяем данные первой строки
-    expect(screen.getByText('1')).toBeInTheDocument();
-    expect(screen.getByText('10000 ₽')).toBeInTheDocument();
-    expect(screen.getByText('8000 ₽')).toBeInTheDocument();
-    expect(screen.getByText('2000 ₽')).toBeInTheDocument();
-    expect(screen.getByText('92000 ₽')).toBeInTheDocument();
+    const firstRow = screen.getAllByRole('row')[1];
+    const utils = within(firstRow);
+    expect(utils.getByText('1')).toBeInTheDocument();
+    expect(utils.getByText('10000 ₽')).toBeInTheDocument();
+    expect(utils.getByText('8000 ₽')).toBeInTheDocument();
+    expect(utils.getByText('2000 ₽')).toBeInTheDocument();
+    expect(utils.getByText('92000 ₽')).toBeInTheDocument();
   });
   
   it('должен осуществлять навигацию по страницам', () => {
@@ -95,3 +98,4 @@ describe('PaymentScheduleTable', () => {
     expect(screen.getAllByRole('row').length).toBe(12 + 1);
   });
 }); 
+

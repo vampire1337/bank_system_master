@@ -5,6 +5,8 @@ import { prisma } from "@/app/lib/prisma";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
+import StatusBadge from "@/app/components/StatusBadge";
+import { formatCurrency, formatDate } from "@/app/lib/utils";
 
 export const metadata: Metadata = {
   title: "Личный кабинет | БанкКредит",
@@ -55,31 +57,14 @@ export default async function ProfilePage() {
                   <div key={request.id} className="border p-4 rounded-md">
                     <div className="flex justify-between mb-2">
                       <span className="font-medium">Заявка #{request.id.substring(0, 8)}</span>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
-                        request.status === "APPROVED" ? "bg-green-100 text-green-800" :
-                        request.status === "REJECTED" ? "bg-red-100 text-red-800" :
-                        request.status === "PENDING" ? "bg-yellow-100 text-yellow-800" :
-                        request.status === "ISSUED" ? "bg-blue-100 text-blue-800" :
-                        "bg-gray-100 text-gray-800"
-                      }`}>
-                        {request.status === "APPROVED" ? "Одобрено" :
-                         request.status === "REJECTED" ? "Отклонено" :
-                         request.status === "PENDING" ? "На рассмотрении" :
-                         request.status === "ISSUED" ? "Выдан" :
-                         request.status === "CANCELED" ? "Отменена" :
-                         "Неизвестно"}
-                      </span>
+                      <StatusBadge status={request.status} />
                     </div>
                     <p className="text-gray-600 text-sm mb-2">
-                      Сумма: {new Intl.NumberFormat("ru-RU", {
-                        style: "currency",
-                        currency: "RUB",
-                        minimumFractionDigits: 0,
-                      }).format(request.amount)}
+                      Сумма: {formatCurrency(request.amount)}
                       , Срок: {request.term} мес.
                     </p>
                     <p className="text-gray-500 text-xs">
-                      Дата создания: {new Intl.DateTimeFormat("ru-RU").format(request.createdAt)}
+                      Дата создания: {formatDate(request.createdAt)}
                     </p>
                   </div>
                 ))}
@@ -111,11 +96,7 @@ export default async function ProfilePage() {
                       <div>
                         <span className="text-gray-500">Сумма:</span>
                         <span className="font-medium ml-1">
-                          {new Intl.NumberFormat("ru-RU", {
-                            style: "currency",
-                            currency: "RUB",
-                            minimumFractionDigits: 0,
-                          }).format(calc.amount)}
+                          {formatCurrency(calc.amount)}
                         </span>
                       </div>
                       <div>
@@ -129,11 +110,7 @@ export default async function ProfilePage() {
                       <div>
                         <span className="text-gray-500">Платеж:</span>
                         <span className="font-medium ml-1">
-                          {new Intl.NumberFormat("ru-RU", {
-                            style: "currency",
-                            currency: "RUB",
-                            minimumFractionDigits: 0,
-                          }).format(calc.monthlyPayment)}
+                          {formatCurrency(calc.monthlyPayment)}
                         </span>
                       </div>
                     </div>
