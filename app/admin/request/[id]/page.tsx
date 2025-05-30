@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { formatCurrency, formatDate } from "@/app/lib/utils";
+import StatusBadge from "@/app/components/StatusBadge";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
 import { StatusActions } from "../components/StatusActions";
@@ -106,31 +107,7 @@ export default async function RequestDetailPage({ params }: RequestDetailPagePro
               <div>
                 <h3 className="text-gray-500 text-sm">Статус заявки</h3>
                 <div className="mt-1">
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full font-medium ${
-                      creditRequest.status === "APPROVED"
-                        ? "bg-green-100 text-green-800"
-                        : creditRequest.status === "REJECTED"
-                        ? "bg-red-100 text-red-800"
-                        : creditRequest.status === "PENDING"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : creditRequest.status === "ISSUED"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {creditRequest.status === "APPROVED"
-                      ? "Одобрено"
-                      : creditRequest.status === "REJECTED"
-                      ? "Отклонено"
-                      : creditRequest.status === "PENDING"
-                      ? "На рассмотрении"
-                      : creditRequest.status === "ISSUED"
-                      ? "Выдан"
-                      : creditRequest.status === "CANCELED"
-                      ? "Отменена"
-                      : "Неизвестно"}
-                  </span>
+                  <StatusBadge status={creditRequest.status} />
                 </div>
               </div>
             </div>

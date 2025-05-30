@@ -64,6 +64,7 @@ export const CreditRequestForm = () => {
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<CreditRequestFormData>({
     resolver: zodResolver(creditRequestSchema),
@@ -81,8 +82,8 @@ export const CreditRequestForm = () => {
   // Расчет платежей
   const monthlyPayment = calculateMonthlyPayment(
     watchAmount || 0,
-    watchTerm || 0,
-    interestRate
+    interestRate,
+    watchTerm || 0
   );
   
   const totalPayment = calculateTotalPayment(monthlyPayment, watchTerm || 0);
@@ -176,7 +177,7 @@ export const CreditRequestForm = () => {
               value={watchAmount || 0}
               onChange={(e) => {
                 const value = Number(e.target.value);
-                control._formValues.amount = value;
+                setValue("amount", value);
               }}
               className="w-full mt-2"
             />
@@ -215,7 +216,7 @@ export const CreditRequestForm = () => {
               value={watchTerm || 0}
               onChange={(e) => {
                 const value = Number(e.target.value);
-                control._formValues.term = value;
+                setValue("term", value);
               }}
               className="w-full mt-2"
             />

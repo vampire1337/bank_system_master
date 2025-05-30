@@ -1,9 +1,14 @@
-import { NextRequest } from 'next/server';
-import { POST } from './route';
 
 // Мок для getServerSession
 jest.mock('next-auth', () => ({
   getServerSession: jest.fn(),
+}));
+
+jest.mock('next/server', () => ({
+  NextResponse: {
+    json: (data: any, init?: any) => ({ status: init?.status ?? 200, json: async () => data }),
+  },
+  NextRequest: class {},
 }));
 
 // Мок для Prisma
@@ -25,17 +30,19 @@ describe('API маршрут для сохранения расчетов кал
     const { getServerSession } = require('next-auth');
     getServerSession.mockResolvedValue(null);
     
+    // Динамически импортируем обработчик
+    const { POST } = await import('./route');
+
     // Создаем запрос
-    const request = new NextRequest('http://localhost:3000/api/calculator/save', {
-      method: 'POST',
-      body: JSON.stringify({
+    const request = {
+      json: async () => ({
         amount: 100000,
         term: 12,
         interestRate: 10,
         monthlyPayment: 8792,
         totalPayment: 105504,
       }),
-    });
+    } as any;
     
     // Вызываем обработчик запроса
     const response = await POST(request);
@@ -55,17 +62,19 @@ describe('API маршрут для сохранения расчетов кал
       user: { id: 'user-id' },
     });
     
+    // Динамически импортируем обработчик
+    const { POST } = await import('./route');
+
     // Создаем запрос с невалидными данными (сумма меньше минимальной)
-    const request = new NextRequest('http://localhost:3000/api/calculator/save', {
-      method: 'POST',
-      body: JSON.stringify({
+    const request = {
+      json: async () => ({
         amount: 1000, // Меньше минимальной суммы 10000
         term: 12,
         interestRate: 10,
         monthlyPayment: 8792,
         totalPayment: 105504,
       }),
-    });
+    } as any;
     
     // Вызываем обработчик запроса
     const response = await POST(request);
@@ -98,17 +107,19 @@ describe('API маршрут для сохранения расчетов кал
       createdAt: new Date(),
     });
     
+    // Динамически импортируем обработчик
+    const { POST } = await import('./route');
+
     // Создаем запрос с валидными данными
-    const request = new NextRequest('http://localhost:3000/api/calculator/save', {
-      method: 'POST',
-      body: JSON.stringify({
+    const request = {
+      json: async () => ({
         amount: 100000,
         term: 12,
         interestRate: 10,
         monthlyPayment: 8792,
         totalPayment: 105504,
       }),
-    });
+    } as any;
     
     // Вызываем обработчик запроса
     const response = await POST(request);
@@ -137,3 +148,5 @@ describe('API маршрут для сохранения расчетов кал
     });
   });
 }); 
+
+

@@ -34,6 +34,7 @@ jest.mock('recharts', () => {
 // Мок для @/app/lib/utils
 jest.mock('@/app/lib/utils', () => ({
   formatCurrency: (amount: number) => `${amount} ₽`,
+  cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
 }));
 
 describe('PaymentChart', () => {

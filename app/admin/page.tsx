@@ -5,6 +5,7 @@ import { prisma } from "@/app/lib/prisma";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
+import StatusBadge from "@/app/components/StatusBadge";
 import { formatCurrency } from "@/app/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 
@@ -160,31 +161,7 @@ export default async function AdminPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full font-medium ${
-                          request.status === "APPROVED"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                            : request.status === "REJECTED"
-                            ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
-                            : request.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
-                            : request.status === "ISSUED"
-                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                            : "bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300"
-                        }`}
-                      >
-                        {request.status === "APPROVED"
-                          ? "Одобрено"
-                          : request.status === "REJECTED"
-                          ? "Отклонено"
-                          : request.status === "PENDING"
-                          ? "На рассмотрении"
-                          : request.status === "ISSUED"
-                          ? "Выдан"
-                          : request.status === "CANCELED"
-                          ? "Отменена"
-                          : "Неизвестно"}
-                      </span>
+                      <StatusBadge status={request.status} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <Link href={`/admin/request/${request.id}`}>
