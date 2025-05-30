@@ -1,0 +1,216 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Правила использования Toolbox MCP
+
+## Цель
+- Обеспечить доступ к набору универсальных инструментов разработки
+- Автоматизировать рутинные операции и процессы
+- Интегрировать специализированные утилиты в рабочий процесс
+- Повысить эффективность работы с кодом и данными
+
+## Основные принципы
+
+### Организация инструментов
+- Группируй инструменты по назначению и функциональности
+- Используй стандартизированные интерфейсы для взаимодействия
+- Документируй возможности и параметры каждого инструмента
+- Обновляй набор инструментов в соответствии с потребностями проекта
+
+### Автоматизация процессов
+- Создавай цепочки инструментов для комплексных задач
+- Применяй планировщики для регулярных операций
+- Разрабатывай шаблоны для типовых сценариев
+- Настраивай уведомления о результатах работы инструментов
+
+### Управление результатами
+- Организуй результаты работы инструментов в структурированном формате
+- Сохраняй контекст и метаданные для каждой операции
+- Обеспечивай возможность отмены и восстановления изменений
+- Визуализируй результаты для лучшего понимания
+
+## Категории инструментов
+
+### Анализ кода
+- Статический анализ (ESLint, TypeScript)
+- Метрики кода (цикломатическая сложность, покрытие тестами)
+- Поиск уязвимостей и проблем безопасности
+- Анализ зависимостей и обновлений
+
+### Преобразование данных
+- Конвертеры форматов (JSON, CSV, XML)
+- Трансформация структур данных
+- Валидация и очистка данных
+- Генерация тестовых данных
+
+### Генерация кода
+- Создание компонентов и модулей
+- Генерация API-клиентов из спецификаций
+- Создание типов из схем данных
+- Генерация миграций базы данных
+
+### Оптимизация ресурсов
+- Сжатие и оптимизация изображений
+- Минификация CSS и JavaScript
+- Оптимизация шрифтов и ресурсов
+- Анализ производительности загрузки
+
+## Типичные сценарии
+
+### Анализ качества кода
+```typescript
+await toolbox_analyze_code({
+  path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src",
+  tools: ["eslint", "typescript", "sonarqube"],
+  rules: {
+    complexity: "medium",
+    security: "high",
+    style: "airbnb"
+  },
+  output: "report"
+});
+```
+
+### Генерация типов из Swagger/OpenAPI
+```typescript
+await toolbox_generate_types({
+  source: {
+    type: "openapi",
+    path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/api/openapi.yaml"
+  },
+  output: {
+    path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src/types/api.ts",
+    format: "typescript",
+    naming: "pascal-case"
+  },
+  options: {
+    includeDocumentation: true,
+    generateClients: true,
+    framework: "tanstack-query"
+  }
+});
+```
+
+### Создание React компонента
+```typescript
+await toolbox_create_component({
+  name: "TransactionList",
+  type: "functional",
+  path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src/components",
+  framework: {
+    name: "react",
+    version: "18"
+  },
+  style: {
+    framework: "tailwind",
+    preset: "shadcn"
+  },
+  features: ["pagination", "sorting", "filtering"],
+  props: [
+    {
+      name: "transactions",
+      type: "Transaction[]",
+      required: true,
+      description: "Список транзакций для отображения"
+    },
+    {
+      name: "isLoading",
+      type: "boolean",
+      default: "false",
+      description: "Флаг загрузки данных"
+    },
+    {
+      name: "onPageChange",
+      type: "(page: number) => void",
+      description: "Обработчик изменения страницы"
+    }
+  ],
+  template: "data-table"
+});
+```
+
+### Оптимизация изображений
+```typescript
+await toolbox_optimize_images({
+  source: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/public/images",
+  output: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/public/images/optimized",
+  formats: ["webp", "avif"],
+  sizes: [640, 750, 828, 1080, 1200, 1920],
+  quality: 80,
+  metadata: {
+    keep: ["copyright"],
+    strip: ["gps", "exif"]
+  }
+});
+```
+
+### Создание API-маршрутов Next.js
+```typescript
+await toolbox_generate_api_routes({
+  source: {
+    type: "schema",
+    path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/prisma/schema.prisma"
+  },
+  output: {
+    path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/app/api",
+    format: "app-router"
+  },
+  models: ["User", "Account", "Transaction"],
+  operations: ["get", "getById", "create", "update", "delete"],
+  security: {
+    middleware: "authMiddleware",
+    rbac: true
+  },
+  validation: {
+    library: "zod",
+    generateSchemas: true
+  }
+});
+```
+
+### Анализ зависимостей
+```typescript
+await toolbox_analyze_dependencies({
+  path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/package.json",
+  checks: ["vulnerabilities", "outdated", "unused", "duplicates"],
+  visualize: true,
+  recommend: true,
+  output: {
+    format: "html",
+    path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/dependency-report.html"
+  }
+});
+```
+
+### Генерация документации API
+```typescript
+await toolbox_generate_api_docs({
+  source: [
+    "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/app/api/**/*.ts"
+  ],
+  output: {
+    path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/docs/api",
+    format: "markdown"
+  },
+  options: {
+    includeExamples: true,
+    groupByTag: true,
+    includeAuthentication: true
+  },
+  template: "standard"
+});
+```
+
+## Интеграция с рабочим процессом
+- Включай инструменты в процесс CI/CD для автоматизации
+- Создавай хуки для запуска инструментов при определенных событиях
+- Настраивай профили для разных типов задач
+- Отслеживай эффективность использования инструментов
+
+## Интеграция с другими MCP
+- Используй Desktop Commander для доступа к файлам
+- Сохраняй результаты работы инструментов в mem0
+- Применяй Exa MCP для поиска документации по инструментам
+- Интегрируйся с GitHub MCP для автоматизации рабочего процесса

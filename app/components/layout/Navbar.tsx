@@ -8,6 +8,9 @@ import { useSession, signOut } from "next-auth/react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
+// Проверка режима разработки
+const isDevelopment = process.env.NODE_ENV === "development";
+
 export const Navbar = () => {
   const { data: session } = useSession();
   const pathname = usePathname();

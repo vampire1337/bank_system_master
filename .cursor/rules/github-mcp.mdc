@@ -1,0 +1,196 @@
+# Правила использования GitHub MCP
+
+## Цель
+- Обеспечить эффективное управление репозиториями GitHub
+- Автоматизировать рабочие процессы разработки
+- Улучшить отслеживание задач и проблем
+- Организовать командную работу над проектом
+
+## Основные принципы
+
+### Управление репозиториями
+- Следуй структуре монорепозитория или мультирепозитория в зависимости от масштаба
+- Используй ветки для разработки функций (feature branches)
+- Применяй защищенные ветки для основных линий разработки
+- Следуй формату Conventional Commits для сообщений коммитов
+
+### Процесс разработки
+- Создавай issues для всех задач и улучшений
+- Связывай pull requests с issues
+- Используй проекты GitHub для отслеживания прогресса
+- Проводи код-ревью перед слиянием изменений
+
+### Автоматизация
+- Настраивай GitHub Actions для CI/CD
+- Автоматизируй тестирование, линтинг и сборку
+- Используй Dependabot для обновления зависимостей
+- Автоматизируй деплой с помощью GitHub Environments
+
+## Типичные сценарии
+
+### Создание нового репозитория
+```typescript
+await github_create_repository({
+  name: "bank-system-frontend",
+  description: "Фронтенд для банковской системы на Next.js",
+  private: true,
+  auto_init: true,
+  license_template: "mit",
+  gitignore_template: "Node"
+});
+```
+
+### Управление ветками
+```typescript
+// Создание новой ветки
+await github_create_branch({
+  repository: "bank-system-frontend",
+  base: "main",
+  name: "feature/auth-system"
+});
+
+// Защита основной ветки
+await github_update_branch_protection({
+  repository: "bank-system-frontend",
+  branch: "main",
+  required_status_checks: true,
+  enforce_admins: true,
+  required_pull_request_reviews: true,
+  required_approving_review_count: 1
+});
+```
+
+### Работа с Issues
+```typescript
+// Создание issue
+const issueNumber = await github_create_issue({
+  repository: "bank-system-frontend",
+  title: "Реализовать систему аутентификации",
+  body: `
+## Описание
+Необходимо реализовать систему аутентификации с использованием Next.js и Supabase.
+
+## Требования
+- Регистрация через email/пароль
+- Вход через OAuth (Google, GitHub)
+- Восстановление пароля
+- Защищенные маршруты
+
+## Принятие
+- Все тесты проходят успешно
+- Код соответствует стандартам проекта
+- Документация обновлена
+  `,
+  labels: ["feature", "auth", "priority:high"]
+});
+
+// Комментирование issue
+await github_create_issue_comment({
+  repository: "bank-system-frontend",
+  issue_number: issueNumber,
+  body: "Начинаю работу над этой задачей. Планирую использовать Supabase Auth и React Hook Form."
+});
+```
+
+### Pull Requests
+```typescript
+// Создание pull request
+await github_create_pull_request({
+  repository: "bank-system-frontend",
+  title: "Реализация аутентификации",
+  body: `
+## Изменения
+- Добавлена страница входа
+- Реализована интеграция с Supabase Auth
+- Добавлены формы регистрации и восстановления пароля
+- Настроены защищенные маршруты
+
+Fixes #${issueNumber}
+  `,
+  head: "feature/auth-system",
+  base: "main"
+});
+```
+
+### Управление релизами
+```typescript
+await github_create_release({
+  repository: "bank-system-frontend",
+  tag_name: "v1.0.0",
+  name: "Первый релиз",
+  body: `
+## Новые функции
+- Аутентификация пользователей
+- Управление профилем
+- Базовый пользовательский интерфейс
+
+## Исправления
+- Исправлены проблемы с адаптивностью
+- Улучшена производительность загрузки страниц
+  `,
+  draft: false,
+  prerelease: false
+});
+```
+
+## GitHub Actions
+
+### Настройка workflow для тестирования
+```yaml
+name: Тестирование
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+```
+
+### Настройка workflow для деплоя
+```yaml
+name: Деплой
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Деплой на Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+```
+
+## Интеграция с другими MCP
+- Используй mem0 для сохранения контекста о задачах и решениях
+- Применяй Desktop Commander для локальной работы с репозиторием
+- Используй Supabase MCP для синхронизации изменений в базе данных

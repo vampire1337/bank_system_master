@@ -1,0 +1,81 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Как удалять информацию из памяти
+
+## ВАЖНО: Регулярно удаляй устаревшую информацию!
+
+## Когда удалять из памяти
+- Когда информация устарела (компонент или код переписан)
+- После обновления конфигурации или архитектурного решения
+- Когда обнаружен дубликат информации
+- При накоплении временных отладочных данных
+
+## Простая структура удаления
+```typescript
+await delete_memory({
+  memoryId: "id-воспоминания-для-удаления",
+  userId: "heist1337",
+  agentId: "cursor", 
+  appId: "bank_system_master"
+});
+```
+
+## Примеры удаления
+
+### Удаление по ID
+```typescript
+// Сначала находим устаревшую информацию
+const results = await search_memory({
+  query: "старый компонент кнопки",
+  userId: "heist1337",
+  appId: "bank_system_master"
+});
+
+// Затем удаляем её, если найдена
+if (results.length > 0) {
+  await delete_memory({
+    memoryId: results[0].id,
+    userId: "heist1337",
+    agentId: "cursor",
+    appId: "bank_system_master"
+  });
+}
+```
+
+### Удаление с заменой
+```typescript
+// Поиск устаревшей информации
+const oldResults = await search_memory({
+  query: "авторизация",
+  userId: "heist1337",
+  filters: {
+    "metadata.tags": { "$in": ["auth", "config"] }
+  }
+});
+
+// Удаляем устаревшую информацию
+if (oldResults.length > 0) {
+  await delete_memory({
+    memoryId: oldResults[0].id,
+    userId: "heist1337",
+    agentId: "cursor",
+    appId: "bank_system_master"
+  });
+}
+
+// Добавляем новую информацию
+await add_memory({
+  content: "Обновленная конфигурация авторизации с поддержкой 2FA",
+  userId: "heist1337",
+  agentId: "cursor",
+  appId: "bank_system_master",
+  metadata: {
+    type: "config",
+    tags: ["auth", "2fa", "security"]
+  }
+});
+```
+

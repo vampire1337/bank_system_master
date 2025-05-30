@@ -1,0 +1,211 @@
+# Правила использования Vercel API MCP
+
+## Цель
+- Автоматизировать развертывание проектов на платформе Vercel
+- Управлять настройками и конфигурацией проектов
+- Контролировать домены и переменные окружения
+- Мониторить производительность и использование ресурсов
+
+## Основные принципы
+
+### Управление проектами
+- Организуй проекты в соответствии с командами и доменами
+- Используй стандартизированные настройки для схожих проектов
+- Применяй семантическое версионирование для развертываний
+- Документируй конфигурации и интеграции
+
+### Окружения разработки
+- Создавай отдельные окружения для разработки, тестирования и производства
+- Используй переменные окружения для конфигурации
+- Настраивай предварительный просмотр для ветвей разработки
+- Изолируй тестовые данные от производственных
+
+### Мониторинг и аналитика
+- Отслеживай ключевые метрики производительности
+- Настраивай оповещения для критических событий
+- Анализируй использование ресурсов и оптимизируй затраты
+- Собирай данные о пользовательском опыте
+
+## Типичные сценарии
+
+### Создание нового проекта
+```typescript
+await vercel_create_project({
+  name: "bank-system-frontend",
+  framework: "nextjs",
+  gitRepository: {
+    type: "github",
+    repo: "username/bank-system-frontend"
+  },
+  buildCommand: "npm run build",
+  outputDirectory: ".next",
+  installCommand: "npm install",
+  rootDirectory: ""
+});
+```
+
+### Управление переменными окружения
+```typescript
+await vercel_create_environment_variables({
+  projectId: "prj_xxxxxxxxxxxxx",
+  environmentVariables: [
+    {
+      key: "NEXT_PUBLIC_SUPABASE_URL",
+      value: "https://xxxxxxxxxxxxx.supabase.co",
+      target: ["production", "preview", "development"]
+    },
+    {
+      key: "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      value: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      target: ["production", "preview", "development"]
+    },
+    {
+      key: "NEXTAUTH_SECRET",
+      value: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      target: ["production", "preview", "development"]
+    }
+  ]
+});
+```
+
+### Настройка доменов
+```typescript
+// Добавление домена к проекту
+await vercel_add_domain({
+  projectId: "prj_xxxxxxxxxxxxx",
+  domain: "bank-system.example.com"
+});
+
+// Настройка редиректа
+await vercel_add_redirect({
+  projectId: "prj_xxxxxxxxxxxxx",
+  source: "/app",
+  destination: "/dashboard",
+  permanent: true
+});
+```
+
+### Управление развертываниями
+```typescript
+// Создание нового развертывания
+const deploymentId = await vercel_create_deployment({
+  projectId: "prj_xxxxxxxxxxxxx",
+  ref: "main",
+  meta: {
+    description: "Релиз версии 1.0.0"
+  }
+});
+
+// Отслеживание статуса развертывания
+await vercel_get_deployment({
+  deploymentId: deploymentId
+});
+
+// Продвижение в production
+await vercel_promote_deployment({
+  deploymentId: deploymentId,
+  target: "production"
+});
+```
+
+### Управление командами
+```typescript
+// Создание новой команды
+const teamId = await vercel_create_team({
+  name: "Bank System Team",
+  slug: "bank-system-team"
+});
+
+// Добавление участника в команду
+await vercel_add_team_member({
+  teamId: teamId,
+  email: "developer@example.com",
+  role: "member"
+});
+```
+
+## Оптимизация для Next.js
+
+### Настройка образа ISR
+```typescript
+await vercel_update_project({
+  projectId: "prj_xxxxxxxxxxxxx",
+  framework: {
+    preset: "nextjs",
+    version: "13.4.0"
+  },
+  buildCommand: "npm run build",
+  outputDirectory: ".next",
+  installCommand: "npm install",
+  settings: {
+    isr: {
+      enabled: true,
+      maxAgeSeconds: 60,
+      cacheDurationSeconds: 31536000,
+      excludeRoutes: ["/api/*"]
+    }
+  }
+});
+```
+
+### Оптимизация изображений
+```typescript
+await vercel_update_project({
+  projectId: "prj_xxxxxxxxxxxxx",
+  settings: {
+    images: {
+      domains: ["example.com", "cdn.example.com"],
+      sizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+      formats: ["image/avif", "image/webp"]
+    }
+  }
+});
+```
+
+## Интеграция с AI
+```typescript
+await vercel_update_project({
+  projectId: "prj_xxxxxxxxxxxxx",
+  settings: {
+    ai: {
+      enabled: true,
+      assistEnabled: true,
+      serverless: true,
+      streaming: true
+    }
+  }
+});
+```
+
+## Анализ производительности
+```typescript
+// Получение метрик Web Vitals
+const metrics = await vercel_get_web_vitals({
+  projectId: "prj_xxxxxxxxxxxxx",
+  period: "7d",
+  metric: "all"
+});
+
+// Сохранение в память для анализа
+await add_memory({
+  content: JSON.stringify(metrics, null, 2),
+  userId: "heist1337",
+  agentId: "cursor",
+  appId: "bank_system_master",
+  metadata: {
+    category: "performance",
+    type: "web-vitals",
+    version: "v2",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    importance: 8,
+    tags: ["vercel", "performance", "web-vitals"]
+  }
+});
+```
+
+## Интеграция с другими MCP
+- Используй GitHub MCP для синхронизации кодовой базы
+- Используй Supabase MCP для настройки бэкенда
+- Применяй mem0 для сохранения конфигураций и метрик
+- Используй Desktop Commander для локального тестирования перед деплоем

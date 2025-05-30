@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
 import { formatCurrency } from "@/app/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Админ-панель | БанкКредит",
@@ -45,187 +46,196 @@ export default async function AdminPage() {
   const userCount = await prisma.user.count();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">Админ-панель</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
+      <h1 className="text-3xl font-bold mb-8 gradient-text">Админ-панель</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-gray-500 text-sm font-medium mb-2">
-            Всего заявок
-          </h2>
-          <p className="text-3xl font-bold">
-            {statistics?.totalRequests || 0}
-          </p>
-        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="text-muted-foreground text-sm font-medium mb-2">
+              Всего заявок
+            </h2>
+            <p className="text-3xl font-bold">
+              {statistics?.totalRequests || 0}
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-gray-500 text-sm font-medium mb-2">
-            Одобрено
-          </h2>
-          <p className="text-3xl font-bold text-green-600">
-            {statistics?.approvedRequests || 0}
-          </p>
-        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="text-muted-foreground text-sm font-medium mb-2">
+              Одобрено
+            </h2>
+            <p className="text-3xl font-bold text-green-600">
+              {statistics?.approvedRequests || 0}
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-gray-500 text-sm font-medium mb-2">
-            Отклонено
-          </h2>
-          <p className="text-3xl font-bold text-red-600">
-            {statistics?.rejectedRequests || 0}
-          </p>
-        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="text-muted-foreground text-sm font-medium mb-2">
+              Отклонено
+            </h2>
+            <p className="text-3xl font-bold text-red-600">
+              {statistics?.rejectedRequests || 0}
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-gray-500 text-sm font-medium mb-2">
-            Пользователей
-          </h2>
-          <p className="text-3xl font-bold">{userCount}</p>
-        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="text-muted-foreground text-sm font-medium mb-2">
+              Пользователей
+            </h2>
+            <p className="text-3xl font-bold">{userCount}</p>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-bold">Последние заявки</h2>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  № заявки
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Клиент
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Сумма
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Срок
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Скоринг
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Статус
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Действия
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {recentRequests.map((request) => (
-                <tr key={request.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {request.id.substring(0, 8)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {request.user.name}
-                    <div className="text-xs text-gray-400">{request.user.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatCurrency(request.amount)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {request.term} мес.
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    {request.scoringResult ? (
-                      <div className="flex items-center">
-                        <span className={`font-medium ${
-                          request.scoringPassed
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}>
-                          {request.scoringResult}
-                        </span>
-                        <span className="ml-2 px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100">
-                          {request.scoringPassed ? "Прошел" : "Не прошел"}
-                        </span>
-                      </div>
-                    ) : (
-                      "Не выполнен"
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full font-medium ${
-                        request.status === "APPROVED"
-                          ? "bg-green-100 text-green-800"
-                          : request.status === "REJECTED"
-                          ? "bg-red-100 text-red-800"
-                          : request.status === "PENDING"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : request.status === "ISSUED"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {request.status === "APPROVED"
-                        ? "Одобрено"
-                        : request.status === "REJECTED"
-                        ? "Отклонено"
-                        : request.status === "PENDING"
-                        ? "На рассмотрении"
-                        : request.status === "ISSUED"
-                        ? "Выдан"
-                        : request.status === "CANCELED"
-                        ? "Отменена"
-                        : "Неизвестно"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <Link href={`/admin/request/${request.id}`}>
-                      <Button variant="ghost" size="sm">
-                        Просмотр
-                      </Button>
-                    </Link>
-                  </td>
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Последние заявки</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    № заявки
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Клиент
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Сумма
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Срок
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Скоринг
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Статус
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Действия
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {recentRequests.map((request) => (
+                  <tr key={request.id} className="hover:bg-muted/20">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      {request.id.substring(0, 8)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {request.user.name}
+                      <div className="text-xs text-muted-foreground">{request.user.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {formatCurrency(request.amount)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {request.term} мес.
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {request.scoringResult ? (
+                        <div className="flex items-center">
+                          <span className={`font-medium ${
+                            request.scoringPassed
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}>
+                            {request.scoringResult}
+                          </span>
+                          <span className="ml-2 px-2 py-0.5 text-xs rounded-full font-medium bg-muted">
+                            {request.scoringPassed ? "Прошел" : "Не прошел"}
+                          </span>
+                        </div>
+                      ) : (
+                        "Не выполнен"
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full font-medium ${
+                          request.status === "APPROVED"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                            : request.status === "REJECTED"
+                            ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                            : request.status === "PENDING"
+                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                            : request.status === "ISSUED"
+                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                            : "bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300"
+                        }`}
+                      >
+                        {request.status === "APPROVED"
+                          ? "Одобрено"
+                          : request.status === "REJECTED"
+                          ? "Отклонено"
+                          : request.status === "PENDING"
+                          ? "На рассмотрении"
+                          : request.status === "ISSUED"
+                          ? "Выдан"
+                          : request.status === "CANCELED"
+                          ? "Отменена"
+                          : "Неизвестно"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <Link href={`/admin/request/${request.id}`}>
+                        <Button variant="ghost" size="sm">
+                          Просмотр
+                        </Button>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link href="/admin/requests">
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <h3 className="text-lg font-bold mb-2">Заявки</h3>
-            <p className="text-gray-600 mb-4">
-              Управление кредитными заявками, просмотр и изменение статусов
-            </p>
-            <Button variant="outline" className="w-full">
-              Перейти к заявкам
-            </Button>
-          </div>
+        <Link href="/admin/requests" className="block">
+          <Card className="h-full card-hover">
+            <CardContent className="pt-6">
+              <h3 className="text-lg font-bold mb-2">Заявки</h3>
+              <p className="text-muted-foreground mb-4">
+                Управление кредитными заявками, просмотр и изменение статусов
+              </p>
+              <Button variant="outline" className="w-full">Перейти</Button>
+            </CardContent>
+          </Card>
         </Link>
 
-        <Link href="/admin/users">
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <h3 className="text-lg font-bold mb-2">Пользователи</h3>
-            <p className="text-gray-600 mb-4">
-              Управление пользователями системы, изменение ролей
-            </p>
-            <Button variant="outline" className="w-full">
-              Перейти к пользователям
-            </Button>
-          </div>
+        <Link href="/admin/users" className="block">
+          <Card className="h-full card-hover">
+            <CardContent className="pt-6">
+              <h3 className="text-lg font-bold mb-2">Пользователи</h3>
+              <p className="text-muted-foreground mb-4">
+                Управление учетными записями пользователей и их правами
+              </p>
+              <Button variant="outline" className="w-full">Перейти</Button>
+            </CardContent>
+          </Card>
         </Link>
 
-        <Link href="/admin/settings">
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <h3 className="text-lg font-bold mb-2">Настройки</h3>
-            <p className="text-gray-600 mb-4">
-              Управление параметрами кредитования и системными настройками
-            </p>
-            <Button variant="outline" className="w-full">
-              Перейти к настройкам
-            </Button>
-          </div>
+        <Link href="/admin/settings" className="block">
+          <Card className="h-full card-hover">
+            <CardContent className="pt-6">
+              <h3 className="text-lg font-bold mb-2">Настройки</h3>
+              <p className="text-muted-foreground mb-4">
+                Настройка параметров кредитования, ставок и скоринга
+              </p>
+              <Button variant="outline" className="w-full">Перейти</Button>
+            </CardContent>
+          </Card>
         </Link>
       </div>
     </div>

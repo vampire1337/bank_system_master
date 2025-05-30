@@ -13,7 +13,6 @@ dist/
 *.lock
 *.log
 .env
-.env.*
 *.config.*
 *.rc
 tsconfig.*.json

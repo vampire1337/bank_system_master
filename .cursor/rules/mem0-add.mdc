@@ -1,0 +1,74 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Как добавлять информацию в память
+
+## ВАЖНО: Сохраняй каждый значимый результат работы!
+
+## Когда сохранять в память
+- После создания нового компонента/функции
+- После принятия архитектурного решения
+- После настройки важной конфигурации
+- После исправления сложного бага
+
+## Простая структура добавления
+```typescript
+await add_memory({
+  content: "Краткое описание компонента/решения/кода",
+  userId: "heist1337",
+  agentId: "cursor", 
+  appId: "bank_system_master",
+  metadata: {
+    type: "component", // или "config", "architecture", "bug-fix"
+    tags: ["button", "ui"], // 2-3 ключевых тега для поиска
+    path: "src/components/Button.tsx" // путь к файлу если применимо
+  }
+});
+```
+
+## Примеры добавления
+
+### Компонент
+```typescript
+await add_memory({
+  content: `Компонент ProfileCard показывает информацию о пользователе с аватаром, именем и действиями`,
+  userId: "heist1337",
+  agentId: "cursor",
+  appId: "bank_system_master",
+  metadata: {
+    type: "component",
+    tags: ["profile", "card", "ui"],
+    path: "src/components/ProfileCard.tsx"
+  }
+});
+```
+
+### Конфигурация
+```typescript
+await add_memory({
+  content: `Настройка авторизации через NextAuth с провайдерами Google и Email`,
+  userId: "heist1337",
+  agentId: "cursor",
+  appId: "bank_system_master",
+  metadata: {
+    type: "config",
+    tags: ["auth", "nextauth", "google"]
+  }
+});
+```
+
+### Архитектурное решение
+```typescript
+await add_memory({
+  content: `Данные пользователя кэшируются на клиенте с использованием TanStack Query и инвалидируются при изменениях`,
+  userId: "heist1337",
+  agentId: "cursor",
+  appId: "bank_system_master",
+  metadata: {
+    type: "architecture",
+    tags: ["cache", "tanstack", "invalidation"]
+  }
+});
+```

@@ -1,0 +1,706 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Правила интеграции MCP-серверов
+
+## Цель
+- Обеспечить эффективное взаимодействие между различными MCP-серверами
+- Создать целостную экосистему для разработки и управления проектами
+- Автоматизировать рабочие процессы с использованием нескольких MCP
+- Максимизировать продуктивность за счет комбинирования возможностей
+
+## Основные принципы
+
+### Архитектура интеграции
+- Используй модульный подход к интеграции MCP-серверов
+- Разделяй задачи между серверами по их специализации
+- Обеспечивай передачу контекста между серверами
+- Применяй асинхронные процессы для длительных операций
+
+### Управление данными
+- Согласуй форматы данных между различными MCP
+- Используй общие идентификаторы для связанных сущностей
+- Обеспечивай консистентность между различными хранилищами
+- Внедряй механизмы синхронизации при необходимости
+
+### Оркестрация процессов
+- Создавай сценарии, объединяющие возможности разных MCP
+- Используй события для координации работы серверов
+- Обеспечивай обработку ошибок и восстановление
+- Оптимизируй последовательность вызовов для уменьшения латентности
+
+## Типичные сценарии интеграции
+
+### Разработка нового компонента
+1. Исследование документации и примеров:
+   ```typescript
+   // Exa MCP: Поиск информации о компоненте
+   const searchResults = await web_search({
+     search_term: "Shadcn UI Dialog компонент React Server Components"
+   });
+   
+   // mem0: Сохранение найденной информации
+   await add_memory({
+     content: JSON.stringify(searchResults, null, 2),
+     userId: "heist1337",
+     agentId: "cursor",
+     appId: "bank_system_master",
+     metadata: {
+       category: "research",
+       type: "component",
+       version: "v2",
+       createdAt: new Date().toISOString(),
+       updatedAt: new Date().toISOString(),
+       tags: ["shadcn", "dialog", "rsc"]
+     }
+   });
+   ```
+
+2. Создание и редактирование компонента:
+   ```typescript
+   // Desktop Commander: Создание файла компонента
+   await write_file({
+     path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src/components/ui/ConfirmDialog.tsx",
+     content: `'use client';
+
+import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+export interface ConfirmDialogProps {
+  title: string;
+  description: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  children: React.ReactNode;
+}
+
+export const ConfirmDialog = ({
+  title,
+  description,
+  confirmLabel = "Подтвердить",
+  cancelLabel = "Отмена",
+  onConfirm,
+  onCancel,
+  children
+}: ConfirmDialogProps) => {
+  const [open, setOpen] = useState(false);
+  
+  const handleConfirm = () => {
+    onConfirm();
+    setOpen(false);
+  };
+  
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
+    setOpen(false);
+  };
+  
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex gap-2 sm:justify-start">
+          <Button type="button" variant="secondary" onClick={handleCancel}>
+            {cancelLabel}
+          </Button>
+          <Button type="button" variant="destructive" onClick={handleConfirm}>
+            {confirmLabel}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};`
+   });
+   
+   // Memory Bank: Сохранение шаблона компонента
+   await memory_bank_write({
+     projectName: "bank_system_master",
+     fileName: "components/ConfirmDialog.tsx",
+     content: `// Компонент диалога подтверждения
+// Используется для запроса подтверждения перед выполнением операций
+
+'use client';
+
+import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+export interface ConfirmDialogProps {
+  title: string;
+  description: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  children: React.ReactNode;
+}
+
+export const ConfirmDialog = ({
+  title,
+  description,
+  confirmLabel = "Подтвердить",
+  cancelLabel = "Отмена",
+  onConfirm,
+  onCancel,
+  children
+}: ConfirmDialogProps) => {
+  const [open, setOpen] = useState(false);
+  
+  const handleConfirm = () => {
+    onConfirm();
+    setOpen(false);
+  };
+  
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
+    setOpen(false);
+  };
+  
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex gap-2 sm:justify-start">
+          <Button type="button" variant="secondary" onClick={handleCancel}>
+            {cancelLabel}
+          </Button>
+          <Button type="button" variant="destructive" onClick={handleConfirm}>
+            {confirmLabel}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};`
+   });
+   ```
+
+3. Создание теста для компонента:
+   ```typescript
+   // Desktop Commander: Создание файла теста
+   await write_file({
+     path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src/components/ui/ConfirmDialog.spec.tsx",
+     content: `import { render, screen, fireEvent } from '@testing-library/react';
+import { ConfirmDialog } from './ConfirmDialog';
+import { Button } from './button';
+
+describe('ConfirmDialog', () => {
+  it('renders trigger children correctly', () => {
+    render(
+      <ConfirmDialog
+        title="Confirm Action"
+        description="Are you sure you want to proceed?"
+        onConfirm={() => {}}
+      >
+        <Button>Open Dialog</Button>
+      </ConfirmDialog>
+    );
+    
+    expect(screen.getByText('Open Dialog')).toBeInTheDocument();
+  });
+  
+  it('opens dialog when trigger is clicked', () => {
+    render(
+      <ConfirmDialog
+        title="Confirm Action"
+        description="Are you sure you want to proceed?"
+        onConfirm={() => {}}
+      >
+        <Button>Open Dialog</Button>
+      </ConfirmDialog>
+    );
+    
+    fireEvent.click(screen.getByText('Open Dialog'));
+    
+    expect(screen.getByText('Confirm Action')).toBeInTheDocument();
+    expect(screen.getByText('Are you sure you want to proceed?')).toBeInTheDocument();
+    expect(screen.getByText('Подтвердить')).toBeInTheDocument();
+    expect(screen.getByText('Отмена')).toBeInTheDocument();
+  });
+  
+  it('calls onConfirm when confirm button is clicked', () => {
+    const handleConfirm = jest.fn();
+    
+    render(
+      <ConfirmDialog
+        title="Confirm Action"
+        description="Are you sure you want to proceed?"
+        onConfirm={handleConfirm}
+      >
+        <Button>Open Dialog</Button>
+      </ConfirmDialog>
+    );
+    
+    fireEvent.click(screen.getByText('Open Dialog'));
+    fireEvent.click(screen.getByText('Подтвердить'));
+    
+    expect(handleConfirm).toHaveBeenCalledTimes(1);
+  });
+  
+  it('calls onCancel when cancel button is clicked', () => {
+    const handleCancel = jest.fn();
+    
+    render(
+      <ConfirmDialog
+        title="Confirm Action"
+        description="Are you sure you want to proceed?"
+        onConfirm={() => {}}
+        onCancel={handleCancel}
+      >
+        <Button>Open Dialog</Button>
+      </ConfirmDialog>
+    );
+    
+    fireEvent.click(screen.getByText('Open Dialog'));
+    fireEvent.click(screen.getByText('Отмена'));
+    
+    expect(handleCancel).toHaveBeenCalledTimes(1);
+  });
+});`
+   });
+   
+   // Desktop Commander: Запуск тестов
+   await execute_command({
+     command: "cd /c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master && npm test -- ConfirmDialog",
+     timeout_ms: 30000
+   });
+   ```
+
+4. Создание документации:
+   ```typescript
+   // Office Word MCP: Создание документации компонента
+   await word_create_document({
+     title: "Документация компонента ConfirmDialog",
+     template: "component_documentation",
+     sections: [
+       {
+         title: "Описание",
+         content: "ConfirmDialog - компонент для запроса подтверждения перед выполнением потенциально опасных действий.",
+         level: 1
+       },
+       {
+         title: "Использование",
+         content: `
+\`\`\`tsx
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+
+export const DeleteAccountButton = () => {
+  const handleDeleteAccount = () => {
+    // Логика удаления аккаунта
+  };
+  
+  return (
+    <ConfirmDialog
+      title="Удаление аккаунта"
+      description="Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить."
+      onConfirm={handleDeleteAccount}
+    >
+      <Button variant="destructive">Удалить аккаунт</Button>
+    </ConfirmDialog>
+  );
+};
+\`\`\`
+         `,
+         level: 1
+       },
+       {
+         title: "Props",
+         content: "",
+         level: 1,
+         tables: [
+           {
+             title: "Свойства компонента",
+             headers: ["Название", "Тип", "Обязательный", "По умолчанию", "Описание"],
+             rows: [
+               ["title", "string", "Да", "-", "Заголовок диалога"],
+               ["description", "string", "Да", "-", "Описание или вопрос"],
+               ["confirmLabel", "string", "Нет", "Подтвердить", "Текст кнопки подтверждения"],
+               ["cancelLabel", "string", "Нет", "Отмена", "Текст кнопки отмены"],
+               ["onConfirm", "() => void", "Да", "-", "Функция, вызываемая при подтверждении"],
+               ["onCancel", "() => void", "Нет", "-", "Функция, вызываемая при отмене"],
+               ["children", "React.ReactNode", "Да", "-", "Элемент-триггер для открытия диалога"]
+             ]
+           }
+         ]
+       }
+     ]
+   });
+   
+   // mem0: Сохранение информации о компоненте
+   await add_memory({
+     content: `Компонент ConfirmDialog используется для запроса подтверждения перед выполнением потенциально опасных действий. 
+     
+Расположение: src/components/ui/ConfirmDialog.tsx
+     
+Основные свойства:
+- title: заголовок диалога
+- description: описание или вопрос
+- onConfirm: функция, вызываемая при подтверждении
+- children: элемент-триггер для открытия диалога`,
+     userId: "heist1337",
+     agentId: "cursor",
+     appId: "bank_system_master",
+     metadata: {
+       category: "code",
+       type: "component",
+       version: "v2",
+       createdAt: new Date().toISOString(),
+       updatedAt: new Date().toISOString(),
+       importance: 7,
+       tags: ["ui", "dialog", "confirmation", "shadcn"],
+       filePath: "src/components/ui/ConfirmDialog.tsx"
+     }
+   });
+   ```
+
+### Настройка базы данных и API
+1. Создание схемы базы данных:
+   ```typescript
+   // Desktop Commander: Редактирование схемы Prisma
+   await write_file({
+     path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/prisma/schema.prisma",
+     content: `// Схема базы данных Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}`
+   });
+   
+   // Supabase MCP: Создание миграции
+   const projectId = "<ID проекта>";
+   await apply_migration({
+     project_id: projectId,
+     name: "create_users_accounts_sessions",
+     query: `
+       -- Создание таблиц пользователей и аутентификации
+       CREATE TABLE IF NOT EXISTS "User" (
+         id TEXT PRIMARY KEY,
+         name TEXT,
+         email TEXT UNIQUE,
+         "emailVerified" TIMESTAMP WITH TIME ZONE,
+         image TEXT,
+         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+       );
+       
+       CREATE TABLE IF NOT EXISTS "Account" (
+         id TEXT PRIMARY KEY,
+         "userId" TEXT NOT NULL,
+         type TEXT NOT NULL,
+         provider TEXT NOT NULL,
+         "providerAccountId" TEXT NOT NULL,
+         refresh_token TEXT,
+         access_token TEXT,
+         expires_at INTEGER,
+         token_type TEXT,
+         scope TEXT,
+         id_token TEXT,
+         session_state TEXT,
+         FOREIGN KEY ("userId") REFERENCES "User" (id) ON DELETE CASCADE,
+         UNIQUE (provider, "providerAccountId")
+       );
+       
+       CREATE TABLE IF NOT EXISTS "Session" (
+         id TEXT PRIMARY KEY,
+         "sessionToken" TEXT UNIQUE NOT NULL,
+         "userId" TEXT NOT NULL,
+         expires TIMESTAMP WITH TIME ZONE NOT NULL,
+         FOREIGN KEY ("userId") REFERENCES "User" (id) ON DELETE CASCADE
+       );
+       
+       CREATE TABLE IF NOT EXISTS "VerificationToken" (
+         identifier TEXT NOT NULL,
+         token TEXT NOT NULL,
+         expires TIMESTAMP WITH TIME ZONE NOT NULL,
+         UNIQUE (identifier, token)
+       );
+       
+       -- Настройка RLS
+       ALTER TABLE "User" ENABLE ROW LEVEL SECURITY;
+       ALTER TABLE "Account" ENABLE ROW LEVEL SECURITY;
+       ALTER TABLE "Session" ENABLE ROW LEVEL SECURITY;
+       ALTER TABLE "VerificationToken" ENABLE ROW LEVEL SECURITY;
+       
+       -- Политики безопасности
+       CREATE POLICY "Пользователи могут видеть только свои данные"
+         ON "User" FOR SELECT
+         USING (auth.uid() = id);
+         
+       CREATE POLICY "Пользователи могут обновлять только свои данные"
+         ON "User" FOR UPDATE
+         USING (auth.uid() = id);
+         
+       -- Аналогичные политики для других таблиц...
+     `
+   });
+   
+   // Toolbox MCP: Генерация типов из схемы
+   await toolbox_generate_types({
+     source: {
+       type: "prisma",
+       path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/prisma/schema.prisma"
+     },
+     output: {
+       path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src/types/db.ts",
+       format: "typescript",
+       naming: "pascal-case"
+     },
+     options: {
+       includeDocumentation: true,
+       generateZodSchemas: true
+     }
+   });
+   ```
+
+2. Создание API-маршрутов:
+   ```typescript
+   // Desktop Commander: Создание API-маршрута
+   await write_file({
+     path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/app/api/users/route.ts",
+     content: `import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
+// GET /api/users
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
+    }
+    
+    const searchParams = request.nextUrl.searchParams;
+    const email = searchParams.get('email');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const offset = parseInt(searchParams.get('offset') || '0');
+    
+    const query: any = {};
+    if (email) {
+      query.email = {
+        contains: email
+      };
+    }
+    
+    const users = await prisma.user.findMany({
+      where: query,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        createdAt: true
+      },
+      take: limit,
+      skip: offset,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    
+    const total = await prisma.user.count({
+      where: query
+    });
+    
+    return NextResponse.json({
+      users,
+      pagination: {
+        total,
+        limit,
+        offset
+      }
+    });
+  } catch (error) {
+    console.error('[API] users GET error:', error);
+    return NextResponse.json({ error: 'Внутренняя ошибка сервера' }, { status: 500 });
+  }
+}
+
+// POST /api/users
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 });
+    }
+    
+    const body = await request.json();
+    
+    // Здесь должна быть валидация данных с использованием Zod
+    
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: body.email
+      }
+    });
+    
+    if (existingUser) {
+      return NextResponse.json({ error: 'Пользователь с таким email уже существует' }, { status: 400 });
+    }
+    
+    const user = await prisma.user.create({
+      data: {
+        name: body.name,
+        email: body.email,
+        // Остальные поля...
+      }
+    });
+    
+    return NextResponse.json(user, { status: 201 });
+  } catch (error) {
+    console.error('[API] users POST error:', error);
+    return NextResponse.json({ error: 'Внутренняя ошибка сервера' }, { status: 500 });
+  }
+}`
+   });
+   
+   // GitHub MCP: Создание issue для тестирования API
+   await github_create_issue({
+     repository: "bank-system-frontend",
+     title: "Тестирование API маршрутов пользователей",
+     body: `
+## Описание
+Необходимо протестировать следующие API маршруты:
+- GET /api/users - получение списка пользователей
+- POST /api/users - создание нового пользователя
+
+## Критерии приемки
+- Проверка авторизации работает корректно
+- Фильтрация по email работает
+- Пагинация работает
+- Валидация данных при создании пользователя
+- Проверка на дублирование email
+
+## Задачи
+- [ ] Написать тесты с использованием Jest
+- [ ] Проверить обработку ошибок
+- [ ] Обновить документацию API
+     `,
+     labels: ["api", "testing", "priority:medium"]
+   });
+   ```
+
+## Рабочие процессы интеграции
+
+### Разработка новой функциональности
+1. Исследование и документирование требований (Exa MCP, Office Word MCP)
+2. Создание задач и планирование (GitHub MCP)
+3. Разработка схемы данных (Supabase MCP, Desktop Commander)
+4. Создание API-эндпоинтов (Desktop Commander, Toolbox MCP)
+5. Разработка UI-компонентов (Desktop Commander, mem0)
+6. Тестирование и отладка (Desktop Commander, Toolbox MCP)
+7. Документирование (Office Word MCP, Memory Bank)
+8. Деплой (Vercel API MCP, GitHub MCP)
+
+### Поддержка и обновление проекта
+1. Анализ проблем и багов (Exa MCP, mem0)
+2. Исследование решений (Exa MCP)
+3. Обновление зависимостей (Desktop Commander, Toolbox MCP)
+4. Тестирование обновлений (Desktop Commander)
+5. Документирование изменений (Office Word MCP, Memory Bank)
+6. Создание релиза (GitHub MCP, Vercel API MCP)
+
+## Оптимизация взаимодействия
+- Создавай цепочки вызовов для частых сценариев
+- Используй параллельные операции для независимых задач
+- Оптимизируй передачу данных между серверами
+- Создавай абстракции для типовых интеграций
+
+## Лучшие практики
+- Документируй интеграционные сценарии
+- Тестируй взаимодействие серверов
+- Обеспечивай мониторинг и логирование
+- Создавай резервные механизмы при недоступности сервера

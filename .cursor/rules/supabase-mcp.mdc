@@ -1,0 +1,194 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Правила использования Supabase MCP
+
+## Цель
+- Обеспечить эффективное управление базами данных Supabase
+- Автоматизировать создание и обновление схем данных
+- Реализовать безопасное выполнение SQL-запросов
+- Оптимизировать работу с Edge Functions и миграциями
+
+## Основные принципы
+
+### Управление проектами
+- Всегда запрашивай подтверждение перед созданием проектов (стоимость)
+- Используй организационную структуру для разделения окружений (dev/prod)
+- Поддерживай разработку с помощью веток (branches)
+- Документируй все операции с проектами
+
+### Схемы и миграции
+- Применяй миграции для всех операций DDL
+- Используй последовательное именование миграций в snake_case
+- Избегай ссылок на сгенерированные ID в миграциях данных
+- Реализуй автоматические тесты для миграций
+
+### Безопасность
+- Настраивай Row Level Security (RLS) для всех таблиц
+- Используй анонимный ключ только для публичных данных
+- Проверяй безопасность запросов перед выполнением
+- Применяй принцип наименьших привилегий
+
+## Типичные сценарии
+
+### Создание проекта
+1. Получение информации о стоимости:
+   ```typescript
+   await get_cost({
+     type: "project",
+     organization_id: "<ID организации>"
+   });
+   ```
+
+2. Подтверждение стоимости:
+   ```typescript
+   const confirmationId = await confirm_cost({
+     type: "project",
+     recurrence: "monthly",
+     amount: <стоимость>
+   });
+   ```
+
+3. Создание проекта:
+   ```typescript
+   await create_project({
+     name: "bank-system",
+     organization_id: "<ID организации>",
+     confirm_cost_id: confirmationId,
+     region: "eu-central-1"
+   });
+   ```
+
+### Управление схемой базы данных
+1. Применение миграции для создания таблицы:
+   ```typescript
+   await apply_migration({
+     project_id: "<ID проекта>",
+     name: "create_users_table",
+     query: `
+       CREATE TABLE public.users (
+         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+         email TEXT UNIQUE NOT NULL,
+         full_name TEXT NOT NULL,
+         created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+         updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
+       );
+       
+       ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+       
+       CREATE POLICY "Пользователи могут читать свои данные" 
+         ON public.users FOR SELECT 
+         USING (auth.uid() = id);
+     `
+   });
+   ```
+
+2. Выполнение запроса для проверки:
+   ```typescript
+   await execute_sql({
+     project_id: "<ID проекта>",
+     query: "SELECT * FROM public.users LIMIT 10;"
+   });
+   ```
+
+### Разработка с ветками
+1. Создание ветки разработки:
+   ```typescript
+   const costId = await confirm_cost({
+     type: "branch",
+     recurrence: "hourly",
+     amount: <стоимость>
+   });
+   
+   await create_branch({
+     project_id: "<ID проекта>",
+     name: "develop",
+     confirm_cost_id: costId
+   });
+   ```
+
+2. Слияние изменений в основную ветку:
+   ```typescript
+   await merge_branch({
+     branch_id: "<ID ветки>"
+   });
+   ```
+
+### Развертывание Edge Functions
+```typescript
+await deploy_edge_function({
+  project_id: "<ID проекта>",
+  name: "process-payment",
+  files: [
+    {
+      name: "index.ts",
+      content: `
+        import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+        
+        Deno.serve(async (req: Request) => {
+          try {
+            const { amount, currency, description } = await req.json();
+            
+            // Обработка платежа
+            const result = {
+              success: true,
+              transactionId: crypto.randomUUID(),
+              timestamp: new Date().toISOString()
+            };
+            
+            return new Response(JSON.stringify(result), {
+              headers: { 'Content-Type': 'application/json' }
+            });
+          } catch (error) {
+            return new Response(JSON.stringify({ error: error.message }), {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+        });
+      `
+    }
+  ]
+});
+```
+
+## Генерация типов TypeScript
+```typescript
+const types = await generate_typescript_types({
+  project_id: "<ID проекта>"
+});
+
+// Сохранение типов в файл
+await add_memory({
+  content: types,
+  userId: "heist1337",
+  agentId: "cursor",
+  appId: "bank_system_master",
+  metadata: {
+    category: "code",
+    type: "typescript-types",
+    version: "v2",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    importance: 8,
+    tags: ["supabase", "types", "typescript"]
+  }
+});
+```
+
+## Отладка проблем
+- Используй `get_logs` для выявления проблем в различных сервисах
+- Проверяй логи при ошибках миграций или функций
+- Тестируй запросы перед применением в production
+
+## Интеграция с клиентом
+- Используй `get_project_url` и `get_anon_key` для настройки клиента
+- Генерируй типы TypeScript для полной типизации
+- Настраивай браузерные обертки и хуки для React-компонентов
+
+## Интеграция с другими MCP
+- Используй mem0 для сохранения конфигурации и ключей
+- Сохраняй схемы и миграции в Memory Bank
+- Используй Desktop Commander для управления файлами с типами

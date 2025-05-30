@@ -6,17 +6,16 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // Модель пользователя
 model User {
-  id              String    @id @default(uuid())
+  id              String    @id @default(cuid())
   email           String    @unique
   password        String
   name            String
@@ -25,6 +24,44 @@ model User {
   updatedAt       DateTime  @updatedAt
   creditRequests  CreditRequest[]
   calculatorHistory CalculatorHistory[]
+  accounts        Account[]
+  sessions        Session[]
+}
+
+// Модели для NextAuth.js
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+  
+  @@unique([identifier, token])
 }
 
 enum UserRole {
@@ -34,7 +71,7 @@ enum UserRole {
 
 // Модель кредитной заявки
 model CreditRequest {
-  id            String    @id @default(uuid())
+  id            String    @id @default(cuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id])
   status        RequestStatus @default(PENDING)
@@ -95,7 +132,7 @@ enum EmploymentType {
 
 // Модель программы страхования
 model InsuranceProgram {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   name        String
   description String
   coveragePercent Float
@@ -108,7 +145,7 @@ model InsuranceProgram {
 
 // Модель параметров кредитования
 model CreditParameters {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   minAmount   Float
   maxAmount   Float
   minTerm     Int       // в месяцах
@@ -123,7 +160,7 @@ model CreditParameters {
 
 // Модель истории использования калькулятора
 model CalculatorHistory {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   userId      String?
   user        User?     @relation(fields: [userId], references: [id])
   amount      Float
@@ -136,7 +173,7 @@ model CalculatorHistory {
 
 // Модель статистики
 model Statistics {
-  id                String    @id @default(uuid())
+  id                String    @id @default(cuid())
   totalRequests     Int       @default(0)
   approvedRequests  Int       @default(0)
   rejectedRequests  Int       @default(0)

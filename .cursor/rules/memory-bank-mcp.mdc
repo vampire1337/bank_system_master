@@ -1,0 +1,140 @@
+# Правила использования Memory Bank MCP
+
+## Цель
+- Организовать централизованное хранилище знаний проекта
+- Обеспечить сохранение и доступ к важным фрагментам кода
+- Создать систему для быстрого восстановления контекста между сессиями
+- Поддерживать актуальную документацию по проекту
+
+## Основные принципы
+
+### Организация банка памяти
+- Создавай отдельные проекты для каждого логического домена
+- Структурируй файлы в соответствии с их назначением
+- Используй последовательную систему именования
+- Обновляй файлы при значительных изменениях
+
+### Типы хранимой информации
+- Архитектурные решения и обоснования
+- Сложные алгоритмы и бизнес-логика
+- Конфигурации и настройки окружения
+- Шаблоны и примеры компонентов
+- Решения возникших проблем
+
+## Типичные сценарии
+
+### Управление архитектурой проекта
+1. Сохранение архитектурного решения:
+   ```typescript
+   await memory_bank_write({
+     projectName: "bank_system_master",
+     fileName: "architecture/app-router-structure.md",
+     content: `# Структура проекта на базе Next.js App Router
+     
+## Основные директории
+- app/ - основная структура маршрутизации
+- components/ - переиспользуемые компоненты
+- lib/ - утилиты и хелперы
+- prisma/ - схема базы данных
+     
+## Обоснование
+Данная структура обеспечивает четкое разделение между маршрутизацией, компонентами и бизнес-логикой...`
+   });
+   ```
+
+2. Получение информации о структуре:
+   ```typescript
+   await memory_bank_read({
+     projectName: "bank_system_master",
+     fileName: "architecture/app-router-structure.md"
+   });
+   ```
+
+### Шаблоны компонентов
+1. Сохранение шаблона компонента формы:
+   ```typescript
+   await memory_bank_write({
+     projectName: "bank_system_master",
+     fileName: "components/form-template.tsx",
+     content: `'use client';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+
+const formSchema = z.object({
+  username: z.string().min(2).max(50),
+  email: z.string().email(),
+});
+
+export const UserForm = ({ onSubmit }) => {
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+      email: '',
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Имя пользователя</FormLabel>
+              <FormControl>
+                <Input placeholder="Иван Иванов" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="ivan@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Отправить</Button>
+      </form>
+    </Form>
+  );
+};`
+   });
+   ```
+
+## Стратегия обновления
+- Обновляй информацию при значительных изменениях в архитектуре
+- Дополняй существующие файлы новыми примерами и решениями
+- Поддерживай историю версий ключевых решений
+- Регулярно просматривай банк памяти для поддержания актуальности
+
+## Интеграция с другими MCP
+- Используй результаты веб-поиска из Exa MCP для обновления информации
+- Синхронизируй содержимое с mem0 для семантического поиска
+- Используй Desktop Commander для генерации актуального содержания
+
+## Лучшие практики
+- Включай контекст и обоснования для всех решений
+- Документируй неочевидные решения и компромиссы
+- Добавляй примеры использования для всех шаблонов
+- Организуй регулярные ревью и обновления банка памяти
+
+## Типы файлов для хранения
+- Markdown (*.md) для документации и архитектурных решений
+- TypeScript (*.ts, *.tsx) для шаблонов компонентов и утилит
+- JSON (*.json) для конфигураций и структур данных
+- SQL (*.sql) для важных запросов и миграций

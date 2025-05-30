@@ -1,0 +1,82 @@
+# Правила использования Desktop Commander MCP
+
+## Цель
+- Обеспечить эффективное управление файловой системой и терминалом
+- Предоставить безопасный доступ к файлам и командной строке
+- Автоматизировать рутинные операции с файлами и директориями
+
+## Основные принципы
+
+### Работа с файлами
+- Всегда используй абсолютные пути (начинающиеся с '/' или буквы диска 'C:\\')
+- Используй `read_file` вместо команд терминала для просмотра содержимого файлов
+- Применяй `write_file` с режимом append для больших файлов, разбивая их на части до 50 строк
+- Используй `edit_block` для точечного редактирования файлов
+
+### Работа с директориями
+- Используй `list_directory` вместо ls/dir для просмотра содержимого директорий
+- Применяй `create_directory` для создания новых директорий
+- Используй `search_files` для поиска файлов по имени
+- Применяй `search_code` для поиска внутри файлов (аналог grep)
+
+### Работа с терминалом
+- Используй `execute_command` с таймаутом для запуска команд
+- Контролируй процессы через `list_sessions` и `list_processes`
+- Применяй `force_terminate` для завершения зависших процессов
+
+## Типичные сценарии
+
+### Разработка проекта
+1. Сканирование структуры проекта:
+   ```typescript
+   await list_directory("/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master");
+   ```
+
+2. Поиск компонентов с определенной функциональностью:
+   ```typescript
+   await search_code({
+     path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src",
+     pattern: "useEffect",
+     filePattern: "*.tsx"
+   });
+   ```
+
+3. Точечное редактирование компонента:
+   ```typescript
+   await edit_block({
+     file_path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/src/components/UserCard.tsx",
+     old_string: "const [loading, setLoading] = useState(false);",
+     new_string: "const [loading, setLoading] = useState(false);\nconst [error, setError] = useState<Error | null>(null);"
+   });
+   ```
+
+### Управление зависимостями
+1. Проверка установленных пакетов:
+   ```typescript
+   await read_file({
+     path: "/c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master/package.json"
+   });
+   ```
+
+2. Установка новых зависимостей:
+   ```typescript
+   await execute_command({
+     command: "cd /c:/Users/mihai/Heist_master_PC/Documents/GitHub/bank_system_master && npm install react-hook-form zod @hookform/resolvers",
+     timeout_ms: 60000
+   });
+   ```
+
+## Оптимизация производительности
+- Используй `get_file_info` перед чтением больших файлов
+- Применяй контекстные строки в `search_code` для лучшего понимания кода
+- Ограничивай таймауты в `execute_command` для предотвращения зависаний
+
+## Примечания по безопасности
+- Не используй Desktop Commander для выполнения потенциально опасных команд
+- Избегай модификации системных файлов
+- Всегда проверяй пути перед операциями удаления/перезаписи
+
+## Интеграция с другими MCP
+- Сохраняй результаты поиска кода в mem0 для последующего использования
+- Передавай найденные файлы в Supabase MCP для синхронизации с базой данных
+- Используй Exa MCP для поиска документации по найденным компонентам
