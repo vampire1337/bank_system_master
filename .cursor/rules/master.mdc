@@ -3,98 +3,86 @@ description:
 globs: 
 alwaysApply: true
 ---
-All user interfaces and responses must be in Russian.
-Follow Next.js patterns, utilizing the App Router and correctly distinguishing between server and client components.
-Use Tailwind CSS for styling.
-Use Shadcn UI for UI components.
-Use TanStack Query (react-query) for frontend data fetching.
-Use React Hook Form for form handling.
-Use Zod for validation.
-Use React Context for state management.
-Use Prisma for database access.
-Name React files using PascalCase (e.g., UserCard.tsx).
-Use only named exports for React components.
-Testing
+Общие правила: Качество кода, тестирование и управление контекстом
+Цель
 
-Ensure at least 80% test coverage with Jest.
-Create test files (.spec.ts[x]) for each component and utility.
-Write end-to-end (e2e) tests for critical workflows (MCP Playwright).
-In continuous integration (CI), run npm run test && npm run build.
-Code Style
+Обеспечить высокое качество кода через автоматизацию тестирования и управления контекстом.
+Реализовать самособирающийся контекст для динамического сбора информации.
+Предотвратить хаос при тестировании из-за спама npm run dev.
 
-Adhere to the Airbnb style guide with Prettier for formatting.
-Use PascalCase for React component files and only named exports.
-Prohibited: console.log, the any type, and // eslint-disable comments.
-Follow conventions for Next.js App Router, Tailwind CSS, Shadcn UI, TanStack Query, React Hook Form, Zod, React Context, and Prisma.
-Documentation and Git
+Привязка к файлам
 
-Maintain up-to-date README.md and CHANGELOG.md files.
-Document architectural decisions in docs/adr/ADR-xxxx.md.
-Use Conventional Commits format: <type>: <summary>.
-Squash trivial commits before merging; use force-push with caution.
-Mem0 Integration
+Применяется к *.ts, *.tsx, *.test.* и всем файлам в src/.
 
-Utilize Mem0 tools: add_memory, search_memory, delete_memory.
+Привязка к темам вопросов
 
-Always include userId="heist1337", agentId="cursor", and appId=<repository_name>.
+Теги: testing, quality, typescript, context, debugging.
 
-When adding memories, use the following template:
+Автоматизация тестирования
 
-typescript
-
-Копировать
-add_memory(
-  content = "Факт / конфигурация …",  // Use Russian for content
-  metadata = {
-    "version": "v2",
-    "includes": "deployment, db",
-    "immutable": true
-  },
-  appId = "current_repository_name"
+Генерируй тесты (unit, интеграционные, e2e) для каждого нового или изменённого кода.
+Используй TDD: пиши тесты до кода, затем реализуй код.
+Запускай тесты после генерации кода и итерируй до успеха.
+Обеспечивай минимум 80% покрытия тестами с использованием Jest, Playwright или аналогичных инструментов.
+Сохраняй результаты тестов в Mem0:add_memory(
+  content = "Результаты тестов: {passed} passed, {failed} failed",
+  metadata = { "type": "test_result", "version": "v2" },
+  appId = "my-app"
 )
-Before generating code, search for relevant memories:
 
-typescript
 
-Копировать
-search_memory(
-  query = "конфигурации проекта",  // Use Russian for queries
-  filters = { "appId": "my-project", "metadata.type": "project_config" }
+
+Самособирающийся контекст
+
+Для отладки предлагай добавлять отладочные операторы (например, console.log в JavaScript).
+Попроси пользователя запустить код или тесты через терминал и предоставить вывод.
+Сохраняй вывод в Mem0:add_memory(
+  content = "Вывод отладки: {output}",
+  metadata = { "type": "debug_output", "version": "v2" },
+  appId = "my-app"
 )
-Workflow
 
-Plan: Describe the pages and database migrations needed.
-Generate: Ensure the code passes linting, tests, and build processes.
-Commit: Create one meaningful commit per feature or fix.
-Tags: Use [e2e] and [deploy] tags where appropriate.
-Restrictions
 
-Do not modify CI configurations without a valid reason.
-Do not disable linting or TypeScript checks.
-Do not install global dependencies.
-Use boilerplate code only when necessary.
-Technical Recommendations
+Используй сохранённый вывод для корректировки кода или предложений.
 
-TypeScript: Prefer interfaces over types; avoid enums, use constant objects instead.
-Error Handling: Implement early returns, guard clauses, and error boundaries.
-Performance: Minimize the use of 'use client', 'useEffect', and 'setState'; prefer React Server Components.
-UI: Use Shadcn UI, Radix, and Tailwind; design responsively with a mobile-first approach.
-Data Fetching: Use the Supabase SDK for database interactions.
-AI Integration: Leverage the Vercel AI SDK for AI-powered features.
-SEO: Utilize the Next.js metadata API for search engine optimization.
-Optional: NX Configuration
+Управление памятью
 
-If using NX, enforce module boundaries with the following ESLint configuration:
+При вызове search_memory проверяй, что результат не пустой:search_memory(
+  query = "{{message}}",
+  filters = { "metadata.type": ["test_result", "debug_output"], "metadata.version": "v2" }
+)
 
-{
-  "@nx/enforce-module-boundaries": {
-    "enforceBuildableLibDependency": true,
-    "depConstraints": [
-      { "sourceTag": "app", "onlyDependOnLibsWithTags": ["feature-*", "ui", "shared"] },
-      { "sourceTag": "feature-*", "onlyDependOnLibsWithTags": ["ui", "shared"] },
-      { "sourceTag": "ui", "onlyDependOnLibsWithTags": ["shared"] },
-      { "sourceTag": "shared", "onlyDependOnLibsWithTags": ["shared"] }
-    ]
-  }
 
-}
+Если память пуста, запрашивай уточнения или генерируй код без опоры на память.
+Логируй использование памяти для отладки.
+
+Управление сервером
+
+Не запускай npm run dev автоматически. Предполагай, что сервер уже запущен.
+Для проверки изменений предложи пользователю обновить страницу или проверить консоль.
+Если перезапуск необходим, предложи выполнить:pkill -f "next dev" && npm run dev
+
+
+
+Кодстайл
+
+Следуй стандартам Airbnb и Prettier.
+Запрещено: console.log в продакшен-коде, тип any, отключение линтера.
+
+Документация
+
+Поддерживай README.md, CHANGELOG.md, ADR в docs/adr.
+
+Пример использования
+
+При запросе "Сгенерируй функцию":
+Генерируй тесты с Jest.
+Проверяй память через search_memory.
+Если нужно, предложи добавить console.log и запустить код.
+Сохрани результаты в Mem0.
+Предложи пользователю обновить страницу для проверки.
+
+
+
+
+

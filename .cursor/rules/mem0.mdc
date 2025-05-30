@@ -1,0 +1,56 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Правило управления памятью Mem0
+Цель
+Обеспечить актуальность воспоминаний в Mem0 при изменении кода или контекста.
+Предотвратить использование устаревших данных агентом.
+Проверка актуальности
+При каждом изменении кода или запросе на генерацию проверяй хэш текущего файла (например, с помощью hashlib для Python или crypto для Node.js).
+Сравнивай хэш с метаданными воспоминания в Mem0 (добавляй поле file_hash при сохранении).
+Если хэш отличается, помечай воспоминание как устаревшее.
+Обновление памяти
+Если воспоминание устарело, обновляй его через API Mem0:
+
+import requests
+memory_id = "existing_memory_id"
+new_content = "Обновлённое содержание кода или контекста"
+response = requests.put(
+    f"http://localhost:8080/memories/{memory_id}",
+    json={"content": new_content, "metadata": {"file_hash": "new_hash", "updated_at": "2025-05-29T21:13:00Z"}}
+)
+Если воспоминание не удалось обновить (например, из-за конфликта), удаляй его:
+response = requests.delete(f"http://localhost:8080/memories/{memory_id}")
+Временной контроль
+Добавляй временную метку (updated_at) к каждому воспоминанию в метаданных.
+Игнорируй воспоминания старше 7 дней, если есть более свежие данные:
+
+from datetime import datetime, timedelta
+threshold = datetime.now() - timedelta(days=7)
+if datetime.fromisoformat(memory["metadata"]["updated_at"]) < threshold:
+    # Игнорировать или запросить обновление
+    pass
+Предлагай пользователю обновить воспоминание, если оно устарело.
+Автоматизация
+При сохранении нового воспоминания добавляй метаданные:
+
+add_memory(
+    content = "Содержание кода или контекста",
+    metadata = {
+        "file_hash": "computed_hash",
+        "updated_at": "2025-05-29T21:13:00Z",
+        "version": "v2"
+    },
+    appId = "my-app"
+)
+При поиске фильтруй по актуальности:
+
+search_memory(
+    query = "{{message}}",
+    filters = {
+        "metadata.version": "v2",
+        "metadata.updated_at": { "$gte": "2025-05-22T21:13:00Z" }
+
+    }

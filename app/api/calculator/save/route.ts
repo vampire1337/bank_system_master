@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
+import { z } from "zod";
+
+const calculatorSchema = z.object({
+  amount: z.number().min(10000, "Минимальная сумма - 10 000 ₽").max(5000000, "Максимальная сумма - 5 000 000 ₽"),
+  term: z.number().min(3, "Минимальный срок - 3 месяца").max(84, "Максимальный срок - 84 месяца"),
+  interestRate: z.number().min(1, "Минимальная ставка - 1%").max(30, "Максимальная ставка - 30%"),
+  monthlyPayment: z.number().min(1),
+  totalPayment: z.number().min(1),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,25 +23,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await request.json();
-    const { amount, term, interestRate, monthlyPayment, totalPayment } = data;
+    const body = await request.json();
+    const validation = calculatorSchema.safeParse(body);
 
-    // Валидация входных данных
-    if (
-      !amount ||
-      !term ||
-      !interestRate ||
-      !monthlyPayment ||
-      !totalPayment
-    ) {
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Все поля обязательны для заполнения" },
+        { error: "Ошибка валидации данных" },
         { status: 400 }
       );
     }
 
-    // Сохранение расчета в базу данных
-    const calculation = await prisma.calculatorHistory.create({
+    const { amount, term, interestRate, monthlyPayment, totalPayment } = validation.data;
+
+    // Сохранение расчета в базе данных
+    const calculatorHistory = await prisma.calculatorHistory.create({
       data: {
         userId: session.user.id,
         amount,
@@ -45,10 +49,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      id: calculation.id,
+      id: calculatorHistory.id,
+      message: "Расчет успешно сохранен",
     });
   } catch (error) {
-    console.error("Ошибка сохранения расчета:", error);
     return NextResponse.json(
       { error: "Произошла ошибка при сохранении расчета" },
       { status: 500 }
